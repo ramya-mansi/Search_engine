@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research Paper Bot</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #chat-container {
+            border: 1px solid #ccc;
+            max-width: 500px; /* Increased width for the chat container */
+            width: 80%; /* Adjust width as needed */
+            margin: auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: scroll;
+            max-height: 600px; /* Increased height for the chat container */
+            padding: 10px;
+        }
+        #chat-heading {
+            background-color: #f2f2f2;
+            padding: 10px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
+        #messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .user-message, .bot-message {
+            margin: 5px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #f2f2f2;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #e0f2ff;
+            text-align: left;
+        }
+        #user-input {
+            width: 75%;
+            padding: 5px;
+            border: none;
+            border-top: 1px solid #ccc;
+            outline: none;
+        }
+        #send-button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-heading">AI Research Paper Bot</div>
+        <ul id="messages"></ul>
+        <div id="user-input-container">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+  <script>
+    const messagesList = document.getElementById('messages');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+
+    // Function to add a message to the chat
+    function addMessage(message, sender) {
+        const listItem = document.createElement('li');
+        listItem.className = `${sender}-message`;
+        listItem.innerHTML = message;
+        messagesList.appendChild(listItem);
+
+        // Scroll to the bottom of the chat container
+        messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+    // Function to handle user input
+    function handleUserInput() {
+        const userMessage = userInput.value;
+        addMessage(userMessage, 'user');
+
+        // Send user message to an endpoint (adjust the URL accordingly)
+        const endpointURL = '/process';
+        fetch(endpointURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: userMessage })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botResponse = data.response;
+            addMessage(botResponse, 'bot');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        userInput.value = '';
+    }
+
+    // Send user message when Send button is clicked
+    sendButton.addEventListener('click', handleUserInput);
+
+    // Send user message when Enter key is pressed
+    userInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleUserInput();
+        }
+    });
+</script>
+
+</body>
+</html>
