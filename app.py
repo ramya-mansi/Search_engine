@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, Markup
+from flask import Flask, render_template, request, jsonify
+from markupsafe import Markup
 from datetime import datetime
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
@@ -14,7 +15,7 @@ app = Flask(__name__)
 model = SentenceTransformer('paraphrase-distilroberta-base-v2')
 
 # Load the data.csv file into a Pandas dataframe
-df = pd.read_csv('topics.csv')
+df = pd.read_csv('C:/Users/ramya/OneDrive/Desktop/SSE/Search_engine/topics.csv')
 
 cleaned_data_embeddings = model.encode(df['Cleaned Data'].values.tolist(), convert_to_tensor=True)
 cleaned_data_embeddings = cleaned_data_embeddings.cpu().float()
